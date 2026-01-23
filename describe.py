@@ -5,6 +5,15 @@ from matplotlib import pyplot as plt
 df = pd.read_csv("datasets/dataset_train.csv")
 # print(df.drop(columns = "Index").describe()) #THATS CHEATING
 
+# It is forbidden to use any function that does the job for you, such
+# as: count, mean, std, min, max, percentile, etc., no matter the
+# language that you use. Of course, it is also forbidden to use the
+# describe library or any function that looks (more or less) similar to
+
+# maybe len??????
+
+it from another library
+
 col_names = []
 counts = []
 means = []
@@ -63,7 +72,6 @@ for col in df.columns.values[6:]:
         quantile.append(val)
         # print("Q1 = ", val)
 
-
     three_fourth = (count - 1) * 0.75
     three_fourth_low = int(three_fourth)
     three_fourth_high = three_fourth_low + 1
@@ -79,7 +87,7 @@ for col in df.columns.values[6:]:
         val = df.iloc[three_fourth_low][col] + (df.iloc[three_fourth_high][col] - df.iloc[three_fourth_low][col]) * fractional_part 
         quantile.append(val)
         # print("Q3 = ", val)
-    
+
 
     quantiles.append(quantile)
     # Getting min and max from Dataframe method

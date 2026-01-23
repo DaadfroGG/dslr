@@ -5,6 +5,10 @@ from matplotlib.artist import setp
 # 0-4 are for identification
 # the rest is floats (features)
 # Dataframe
+
+# check which element are similar (so we can skip)
+# From this visualization, which features are you going to use for your logistic regression?
+
 df = pd.read_csv("datasets/dataset_train.csv")
 # df.loc[df['Hogwarts House'] == 'Gryffindor'].drop(columns = "Index").hist(alpha=0.5, bins=40)
 # df.loc[df['Hogwarts House'] == 'Slytherin'].drop(columns = "Index").hist(alpha=0.5, bins=40)
