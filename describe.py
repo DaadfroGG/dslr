@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 
 df = pd.read_csv("datasets/dataset_train.csv")
 # print(df.drop(columns = "Index").describe()) #THATS CHEATING
+
 col_names = []
 counts = []
 means = []
@@ -13,11 +14,9 @@ medians = []
 mins = []
 maxes = []
 
-# print(df.size())
-
 for col in df.columns.values[6:]:
-    print("________________________________________________________________________________________")
-    print(col)
+    # print("________________________________________________________________________________________")
+    # print(col)
     col_names.append(col)
     # Getting sum and count from Dataframe methods
     count = df[col].count()
@@ -33,16 +32,16 @@ for col in df.columns.values[6:]:
     median_high = median_low + 1
     fractional_part = median - median_low
     if fractional_part == 0:
-        print("median = ",df.iloc[median_low][col])
+        # print("median = ",df.iloc[median_low][col])
         val = df.iloc[median_low][col]
         medians.append(val)
 
     else:
-        print("fractional_part = " , fractional_part)
-        print("median_low =", median_low, "value =", df.iloc[median_low][col])
-        print("median_high =", median_high, "value =", df.iloc[median_high][col])
+        # print("fractional_part = " , fractional_part)
+        # print("median_low =", median_low, "value =", df.iloc[median_low][col])
+        # print("median_high =", median_high, "value =", df.iloc[median_high][col])
         val = df.iloc[median_low][col] + (df.iloc[median_high][col] - df.iloc[median_low][col]) * fractional_part
-        print("median = ", val)
+        # print("median = ", val)
         medians.append(val)
     # Calculating quantiles (instead of using quantile() method)
     quantile = []
@@ -52,17 +51,17 @@ for col in df.columns.values[6:]:
     fractional_part = quarter - quarter_low
     # If the value is an int, just take the current index
     if fractional_part == 0:
-        print("Q1 = ",df.iloc[quarter_low][col])
+        # print("Q1 = ",df.iloc[quarter_low][col])
         val = df.iloc[quarter_low][col]
         quantile.append(val)
     # Else, interpolate between the two values based on fractional part
     else:
-        print("Q1 fractional_part = " , fractional_part)
-        print("Q1 quarter_low =", quarter_low, "value =", df.iloc[quarter_low][col])
-        print("Q1 quarter_high =", quarter_high, "value =", df.iloc[quarter_high][col])
+        # print("Q1 fractional_part = " , fractional_part)
+        # print("Q1 quarter_low =", quarter_low, "value =", df.iloc[quarter_low][col])
+        # print("Q1 quarter_high =", quarter_high, "value =", df.iloc[quarter_high][col])
         val = df.iloc[quarter_low][col] + (df.iloc[quarter_high][col] - df.iloc[quarter_low][col]) * fractional_part
         quantile.append(val)
-        print("Q1 = ", val)
+        # print("Q1 = ", val)
 
 
     three_fourth = (count - 1) * 0.75
@@ -70,16 +69,16 @@ for col in df.columns.values[6:]:
     three_fourth_high = three_fourth_low + 1
     fractional_part = three_fourth - three_fourth_low
     if fractional_part == 0:
-        print("Q3 = ",df.iloc[three_fourth_low][col])
+        # print("Q3 = ",df.iloc[three_fourth_low][col])
         val = df.iloc[three_fourth_low][col]
         quantile.append(val)
     else:
-        print("Q3 fractional_part = " , fractional_part)
-        print("Q3 three_fourth_low =", three_fourth_low, "value =", df.iloc[three_fourth_low][col])
-        print("Q3 three_fourth_high =", three_fourth_high, "value =", df.iloc[three_fourth_high][col])
+        # print("Q3 fractional_part = " , fractional_part)
+        # print("Q3 three_fourth_low =", three_fourth_low, "value =", df.iloc[three_fourth_low][col])
+        # print("Q3 three_fourth_high =", three_fourth_high, "value =", df.iloc[three_fourth_high][col])
         val = df.iloc[three_fourth_low][col] + (df.iloc[three_fourth_high][col] - df.iloc[three_fourth_low][col]) * fractional_part 
         quantile.append(val)
-        print("Q3 = ", val)
+        # print("Q3 = ", val)
     
 
     quantiles.append(quantile)
@@ -88,11 +87,19 @@ for col in df.columns.values[6:]:
     maxes.append(df[col].max())
 
 
-    # Calculating standart deviation (instead of using the std() method)
-    stds.append(df[col].std())
+    # Calculating squared difference between mean and values
 
+    squared_diffs = [(value - mean) ** 2 for value in df[col] if pd.notna(value)] 
+    # print("len = ", len(squared_diffs) - 1)
+    # print("sum = ", sum(squared_diffs))
+    # Calculating variance (mean of squared difference)
+    variance = sum(squared_diffs) / (len(squared_diffs)-1)
+    # Calculating standard deviation (variance square root)
+    std = variance ** 0.5
+    # print("standard deviation = " , std)
 
-    pass
+    stds.append(std)
+
 
 stats = {
     "count": counts,
