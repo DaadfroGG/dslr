@@ -8,7 +8,7 @@ col_names = []
 counts = []
 means = []
 stds = []
-quartiles = []
+quantiles = []
 medians = []
 mins = []
 maxes = []
@@ -16,46 +16,92 @@ maxes = []
 # print(df.size())
 
 for col in df.columns.values[6:]:
+    print("________________________________________________________________________________________")
+    print(col)
     col_names.append(col)
+    # Getting sum and count from Dataframe methods
     count = df[col].count()
     counts.append(df[col].count())
-    # thats guud i think?
-    means.append(df[col].sum()/df[col].count())
-
+    # Calculating mean of column (instead of using the mean() method)
+    mean = df[col].sum()/df[col].count()
+    means.append(mean)
+    # Sorting the values for median and quantile calculations
     df.sort_values(col, inplace = True)
-    stds.append(df[col].std())
+    # Calculating median (instead of using median() method)
+    median = (count - 1) * 0.50
+    median_low = int(median)
+    median_high = median_low + 1
+    fractional_part = median - median_low
+    if fractional_part == 0:
+        print("median = ",df.iloc[median_low][col])
+        val = df.iloc[median_low][col]
+        medians.append(val)
 
-
+    else:
+        print("fractional_part = " , fractional_part)
+        print("median_low =", median_low, "value =", df.iloc[median_low][col])
+        print("median_high =", median_high, "value =", df.iloc[median_high][col])
+        val = df.iloc[median_low][col] + (df.iloc[median_high][col] - df.iloc[median_low][col]) * fractional_part
+        print("median = ", val)
+        medians.append(val)
+    # Calculating quantiles (instead of using quantile() method)
+    quantile = []
     quarter = (count - 1) * 0.25
     quarter_low = int(quarter)
     quarter_high = quarter_low + 1
     fractional_part = quarter - quarter_low
-    
+    # If the value is an int, just take the current index
     if fractional_part == 0:
-        print("Q1 = ",df.at[quarter_low, col])
+        print("Q1 = ",df.iloc[quarter_low][col])
+        val = df.iloc[quarter_low][col]
+        quantile.append(val)
+    # Else, interpolate between the two values based on fractional part
     else:
-        print("fractional_part = " , fractional_part)
-        # maybe do a linear interpolation ???? thats one method, ill do the lazy one for now
-        print("Q1 = ",df.at[quarter_low + 1, col])
+        print("Q1 fractional_part = " , fractional_part)
+        print("Q1 quarter_low =", quarter_low, "value =", df.iloc[quarter_low][col])
+        print("Q1 quarter_high =", quarter_high, "value =", df.iloc[quarter_high][col])
+        val = df.iloc[quarter_low][col] + (df.iloc[quarter_high][col] - df.iloc[quarter_low][col]) * fractional_part
+        quantile.append(val)
+        print("Q1 = ", val)
 
 
-    quartiles.append(df[col].quantile([0.25,0.75]))
-    medians.append(df[col].median())
+    three_fourth = (count - 1) * 0.75
+    three_fourth_low = int(three_fourth)
+    three_fourth_high = three_fourth_low + 1
+    fractional_part = three_fourth - three_fourth_low
+    if fractional_part == 0:
+        print("Q3 = ",df.iloc[three_fourth_low][col])
+        val = df.iloc[three_fourth_low][col]
+        quantile.append(val)
+    else:
+        print("Q3 fractional_part = " , fractional_part)
+        print("Q3 three_fourth_low =", three_fourth_low, "value =", df.iloc[three_fourth_low][col])
+        print("Q3 three_fourth_high =", three_fourth_high, "value =", df.iloc[three_fourth_high][col])
+        val = df.iloc[three_fourth_low][col] + (df.iloc[three_fourth_high][col] - df.iloc[three_fourth_low][col]) * fractional_part 
+        quantile.append(val)
+        print("Q3 = ", val)
+    
 
-
+    quantiles.append(quantile)
+    # Getting min and max from Dataframe method
     mins.append(df[col].min())
     maxes.append(df[col].max())
-    pass
 
+
+    # Calculating standart deviation (instead of using the std() method)
+    stds.append(df[col].std())
+
+
+    pass
 
 stats = {
     "count": counts,
     "mean": means,
     "std": stds,
     "min": mins,
-    "25%": [q.loc[0.25] for q in quartiles],
+    "25%": [q[0] for q in quantiles],
     "50%": medians,
-    "75%": [q.loc[0.75] for q in quartiles],
+    "75%": [q[1] for q in quantiles],
     "max": maxes,
 }
 
