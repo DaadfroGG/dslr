@@ -17,6 +17,7 @@ def describe_(df):
         means.append(mean)
         # Sorting the values for median and quantile calculations
         sorted_values = sort_(df[col])
+        
         # Calculating median (instead of using median() method)
         median = quantile_(sorted_values, 0.50)
         medians.append(median)

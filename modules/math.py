@@ -21,10 +21,10 @@ def mean_(col):
 
 def sort_(col):
     values = [value for value in col if pd.notna(value)]
-    # for i in range(count_(col)):
-    #     for j in range(count_(col) - i - 1):
-    #         if values[j] < values[j + 1]:
-    #             values[j], values[j + 1] = values[j + 1], values[j]
+    for i in range(count_(col)):
+        for j in range(count_(col) - i - 1):
+            if values[j] > values[j + 1]:
+                values[j], values[j + 1] = values[j + 1], values[j]
     return values
 
 def quantile_(col, fraction):
