@@ -1,36 +1,65 @@
 import csv
 import pandas as pd
+import matplotlib 
+
 from matplotlib import pyplot as plt
 from modules.math import count_, sum_, mean_, sort_, quantile_, std_, min_, max_
 
-df = pd.read_csv("datasets/dataset_train.csv")
+src = pd.read_csv("datasets/dataset_train.csv")
 # df.drop(columns = "Index").hist(alpha=0.5, bins=40) #THATS CHEATING
 # for each house
-bins = 10
 
-histogram = []
+ravenclaw = src.loc[src['Hogwarts House'] == 'Ravenclaw'].drop(columns = "Index")
+slytherin = src.loc[src['Hogwarts House'] == 'Slytherin'].drop(columns = "Index")
+gryffindor = src.loc[src['Hogwarts House'] == 'Gryffindor'].drop(columns = "Index")
+hufflepuff = src.loc[src['Hogwarts House'] == 'Hufflepuff'].drop(columns = "Index")
 
-for col in df.columns.values[6:]:
-    print("")
-    print("________________________________________________________________________________________________________")
-    print(col)
-    min_value = min_(df[col])
-    max_value = max_(df[col])
+houses = [ravenclaw,slytherin,gryffindor,hufflepuff]
+houses_color = ["blue", "green", "red", "yellow"]
+bins = 20
+figure, axes = plt.subplots(5,3)
+for house in range(len(houses)):
+    df = houses[house]
+    i = 0
+    j = 0
+    print("__________________________")
+    for col in df.columns.values[5:]:
+        histogram_x = []
+        histogram_y = []
+        min_value = min_(src[col])
+        max_value = max_(src[col])
+        # print("")
 
-    sorted_values = sort_(df[col])
-    bin_size = (max_value - min_value) / (bins + 1)
-    min_value += bin_size
-    bin = []
-    for value in sorted_values:
-        if value > min_value:
-            min_value += bin_size
-            histogram.append(bin)
-            print("|", len(bin))
-            bin = []
-        bin.append(value)
-        if len(bin) % 10 == 0:
-            print("|", end="")
-    pass
+        sorted_values = sort_(df[col])
+        bin_size = (max_value - min_value) / (bins + 1)
+        min_value += bin_size
+        bin = []
+        for value in sorted_values:
+            if value > min_value:
+                histogram_x.append(min_value + (bin_size / 2) - (bin_size / 4 * house))
+                histogram_y.append(len(bin))
+                min_value += bin_size
+                # print("|", len(bin))
+                bin = []
+            bin.append(value)
+            # if len(bin) % 10 == 0:
+            #     print("|", end="")
+        quantile = []
+        quantile.append(quantile_(sorted_values, 0.25))
+        quantile.append(quantile_(sorted_values, 0.75))
+        max_bin_height = max(histogram_y)
+        quantile_heights = [max_bin_height for q in quantile]
+        
+        axes[j][i].bar(histogram_x, histogram_y, width = bin_size / 4, color = houses_color[house])
+
+        # axes[j][i].stem(quantile, quantile_heights, markerfmt="")
+        axes[j][i].set_title(col)
+        i+=1
+        if i > 2:
+            i = 0
+            j+=1
+
+figure.tight_layout()
 plt.show()
 
 
